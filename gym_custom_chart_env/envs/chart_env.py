@@ -6,14 +6,11 @@ import random
 import numpy as np
 import pickle 
 
-with open(r'data\train_data\df_final_raw.pkl', 'rb') as f:
-    df = pickle.load(f)
-
 class ChartEnv(gym.Env):
     def __init__(self, 
+                 chart_data,
                  action_num=3, 
-                 position_interval=1,
-                 chart_data=df, 
+                 position_interval=1, 
                  risk_adverse= 1.3,
                  init_balance=100000000, 
                  transaction=0.0004, 
@@ -21,7 +18,8 @@ class ChartEnv(gym.Env):
                  stop_loss=0.8,
                  max_position_length = 3600,
                  use_random_start = True,
-                seed = None):
+                 seed = None,
+                 always_execute = False):
         
         super(ChartEnv, self).__init__()
         self.chart_data = chart_data 
