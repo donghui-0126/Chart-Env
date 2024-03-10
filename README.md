@@ -1,4 +1,5 @@
 ## to-do
+- gym-trading-env 와 비슷하게 구성해서 코드 사용성 높히기
 - logging 하기
 - backtest module 추가하기 
 - vector env로 변환하기
