@@ -1,0 +1,20 @@
+왜 execute?
+1. stop_loss
+2. max_duration
+
+만약 execute 되면
+다음 position은 0이 됨
+= 다음 포지션에 asset이 없어짐
+= 다음 포지션에 모두 청산됨
+
+만약 execute 되면
+=> 다음 step에 해당하는 info의 cum_return 초기화하지 않음
+=> historical_info["cum_return", -1]에 해당하는 array를 기반으로 계산
+=> 실제로 다음 idx부터 다시 episode 시작 or 그냥 랜덤하게 재시작	 (고민)
+    
+=> 돈도 새롭게 시작함
+=> 새로운 episode
+=> reward 부여받음
+    => reward는 초기화 하기전에 cum_return 기반으로 sharpe ratio 구함
+    => sharpe 구할 때 asset의 가격을 빼줘도 될 것 같음.
+<- 이렇게 하려면 action에 따른 실현 position 자체를 0으로 만들어버리면 됨.

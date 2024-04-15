@@ -19,7 +19,9 @@ class ChartEnv(gym.Env):
                  max_position_length = 3600,
                  use_random_start = True,
                  seed = None,
-                 always_execute = False):
+                 always_execute = False,
+                 reward_function = "sharpe",
+                 can_short = True):
         
         super(ChartEnv, self).__init__()
         self.chart_data = chart_data 
@@ -41,9 +43,7 @@ class ChartEnv(gym.Env):
         self.max_position_length = max_position_length
         
         # below two variable is exist for plot
-        self.position_portfolio_value = [self.init_balance]
-        self.position_bitcoin_value = [self.chart_data.iloc[self.idx, self.mid_price_index]]
-        
+        self.position_portfolio_value = [self.init_balance]        
         
         self.current_position = {
             "position_size": 0,
@@ -105,11 +105,12 @@ class ChartEnv(gym.Env):
                 reward = self.get_reward()
                 self.reset_position()
                 position_done = True
+                # 여기다 로그 찍기: 새로운 로그파일 생성
             elif not is_execute:
                 reward = 0 
                 position_done = False
+                # 여기다 로그 찍기: 기존 로그파일에 추가
                                
-            self.position_bitcoin_value.append(self.current_price)
             self.position_portfolio_value.append(self.current_position["position_value"])
             
             self.idx += 1
@@ -124,6 +125,7 @@ class ChartEnv(gym.Env):
             # just reset position, not reset env
             position_done = True
             done = False
+            # 여기다 로그 찍기: 새로운 로그파일 생성
             
         elif (reset_by_stop_loss==True):
             # only get reward when position is executed (sparse reward)  
@@ -133,6 +135,7 @@ class ChartEnv(gym.Env):
             # reset position and env
             position_done = True
             done = True    
+            # 여기다 로그 찍기: 새로운 로그파일 생성
 
         # if index > data length: => env.reset()              
         if reset_by_index_bound==True:
@@ -142,7 +145,8 @@ class ChartEnv(gym.Env):
             # reset position and env
             position_done = True
             done = True    
-            
+            # 여기다 로그 찍기: 새로운 로그파일 생성
+
         return np.array(self.next_chart), \
                 reward, \
                 done, \
@@ -154,7 +158,6 @@ class ChartEnv(gym.Env):
                 "next_position": self.next_position,
                 "position_done" : position_done,
                 "position_value": self.position_portfolio_value,
-                "position_value": self.position_bitcoin_value,
                 "done": done
         }
             
@@ -331,7 +334,6 @@ class ChartEnv(gym.Env):
         """
         
         self.position_portfolio_value = [self.init_balance]
-        self.position_bitcoin_value = [self.chart_data.iloc[self.idx, self.mid_price_index]]
         
         
         self.current_position = {
@@ -369,7 +371,6 @@ class ChartEnv(gym.Env):
             self.idx = random.randint(0, self.chart_len)
         
         self.position_portfolio_value = [self.init_balance]
-        self.position_bitcoin_value = [self.chart_data.iloc[self.idx, self.mid_price_index]]
         
         
         self.current_position = {
@@ -406,5 +407,4 @@ class ChartEnv(gym.Env):
                 "current_position": self.current_position,
                 "next_position": self.next_position,
                 "position_value": self.position_portfolio_value,
-                "position_value": self.position_bitcoin_value,
                 })
